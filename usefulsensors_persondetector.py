@@ -98,9 +98,7 @@ class PersonDetector:
         except OSError as error:
             print("No person sensor data found")
             print(error)
-            sleep(1)
-
-        print(result)
+            return
         
         offset = 0
         (pad1, pad2, payload_bytes) = struct.unpack_from(PERSON_SENSOR_I2C_HEADER_FORMAT, result, offset)

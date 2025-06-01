@@ -7,9 +7,6 @@ import struct
 import time
 import sys
 
-# The person sensor has the I2C ID of hex 62
-addy = 0x62
-
 """
 Byte Offset | Meaning
 0 	Reserved
@@ -64,6 +61,9 @@ faceMax = 4
 resultFormat = headerFormat + \
     "B" + faceFormat * faceMax + "H"
 resultByteCount = struct.calcsize(resultFormat)
+
+# The person sensor has the I2C ID of hex 62
+addy = 0x62
 
 # I2C channel will be given through the first arg
 channel = sys.argv[1]
