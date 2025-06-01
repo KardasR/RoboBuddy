@@ -99,12 +99,14 @@ class PersonDetector:
             print("No person sensor data found")
             print(error)
             sleep(1)
+
+        print(result)
         
         offset = 0
         (pad1, pad2, payload_bytes) = struct.unpack_from(PERSON_SENSOR_I2C_HEADER_FORMAT, result, offset)
         offset = offset + PERSON_SENSOR_I2C_HEADER_BYTE_COUNT
 
-        (num_faces) = struct.unpack_from("B", results, offset)
+        (num_faces) = struct.unpack_from("B", result, offset)
         num_faces = int(num_faces[0])
         offset = offset + 1
 
@@ -144,7 +146,7 @@ class PersonDetector:
         self._write_register(_USEFUL_SENSOR_PERSISTENT_IDS_REGISTER, int(enabled))
 
     def setEraseSavedIds(self, enabled):
-        self._write_register(_USEFUL_SENSOR_ERASED_SAVED_IDS_REGISTER, int(enabled))
+        self._write_register(_USEFUL_SENSOR_ERASE_SAVED_IDS_REGISTER, int(enabled))
 
     def singleCapture(self):
         """Write to register."""
