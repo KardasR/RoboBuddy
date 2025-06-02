@@ -12,9 +12,9 @@ def drawBox(left, right, top, bottom):
     for y in range(255):
         row = []
         for x in range(255):
-            if (x == left or x == right) and (y <= top and y >= bottom):
+            if (x == left or x == right) and (y >= top and y <= bottom):
                 row.append("#")
-            elif (y == top or y == bottom) and (x <= left and x >= right):
+            elif (y == top or y == bottom) and (x >= left and x <= right):
                 row.append("#")
             else:
                 row.append(".")
