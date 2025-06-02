@@ -12,8 +12,7 @@ def ShowCameraView(data):
     if (num_faces > 0):
         face = faces[0]
 
-        DB.clearScreen()
-        print(face['box_left'], face['box_right'], face['box_top'], face['box_bottom'])
+        #DB.clearScreen()
         DB.drawBox(face['box_left'], face['box_right'], face['box_top'], face['box_bottom'])
 
 # connect to sensor

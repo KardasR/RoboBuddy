@@ -1,7 +1,6 @@
 import struct
 import io
 import fcntl
-from time import sleep
 
 # register addresses
 _USEFUL_SENSOR_DEFAULT_ADDRESS = 0x62
