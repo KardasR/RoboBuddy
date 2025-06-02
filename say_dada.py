@@ -9,10 +9,12 @@ def ShowCameraView(data):
     num_faces, faces = data
     print("Found {num_faces} faces")
     
-    face = faces[0]   
+    if (num_faces > 0):
+        face = faces[0]
 
-    DB.clearScreen()
-    DB.drawBox(face['box_left'], face['box_right'], face['box_top'], face['box_bottom'])
+        DB.clearScreen()
+        print(face['box_left'], face['box_right'], face['box_top'], face['box_bottom'])
+        DB.drawBox(face['box_left'], face['box_right'], face['box_top'], face['box_bottom'])
 
 # connect to sensor
 sensor = USPD.PersonDetector(sys.argv[1])
