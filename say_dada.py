@@ -59,7 +59,7 @@ def CalibrateandOutput(sensor, lcd, data):
         outputToLCD(lcd, offX, offY)
 
 def StartCal(sensor, face):    
-    sensor.setContinuousMode(1)
+    sensor.setContinuousMode()
     sensor.setIdModelEnabled(1)
     sensor.setPersistentIds(1)
     sleep(0.1)
