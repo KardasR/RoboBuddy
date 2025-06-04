@@ -1,13 +1,11 @@
 from rpi_lcd import LCD
-from time import sleep
 
 lcd = LCD()
 
-try:
-    lcd.text("Papa, are", 1)
-    lcd.text("you there?", 2)
-
-    sleep(5)
-
-finally:
-    lcd.clear()
+class LCD1602:
+    def lcdPrint(line1, line2):
+        lcd.text(line1, 1)
+        lcd.text(line2, 2)
+        
+    def lcdClear():
+        lcd.clear()

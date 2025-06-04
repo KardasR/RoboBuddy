@@ -1,6 +1,7 @@
 import struct
 import io
 import fcntl
+from dataclasses import dataclass
 
 # register addresses
 _USEFUL_SENSOR_DEFAULT_ADDRESS = 0x62
@@ -70,6 +71,16 @@ PERSON_SENSOR_RESULT_FORMAT = PERSON_SENSOR_I2C_HEADER_FORMAT + \
 
 PERSON_SENSOR_RESULT_BYTE_COUNT = struct.calcsize(PERSON_SENSOR_RESULT_FORMAT)
 
+@dataclass
+class Face:
+    box_confidence: int
+    left: int
+    right: int
+    bottom: int
+    top: int
+    id_confidence: int
+    id: int
+    is_facing: int
 
 class PersonDetector:
     def __init__(self, channel: int):
@@ -112,16 +123,8 @@ class PersonDetector:
             (box_confidence, box_left, box_top, box_right, box_bottom, id_confidence, id, 
              is_facing) = struct.unpack_from(PERSON_SENSOR_FACE_FORMAT, result, offset)
             offset = offset + PERSON_SENSOR_FACE_BYTE_COUNT
-            face = {
-                    "box_confidence": box_confidence,
-                    "box_left": box_left,
-                    "box_top": box_top,
-                    "box_right": box_right,
-                    "box_bottom": box_bottom,
-                    "id_confidence": id_confidence,
-                    "id": id,
-                    "is_facing": is_facing,
-            }
+            face = Face(box_confidence, box_left, box_right, box_bottom, box_top, id_confidence, id, is_facing)
+            
             faces.append(face)
 
         checksum = struct.unpack_from("H", result, offset)

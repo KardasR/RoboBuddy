@@ -1,9 +1,14 @@
 # this will test the person sensor from useful sensors.
 
 import usefulsensors_persondetector as USPD
+import LCD1602
 import drawBoxes as DB
 from time import sleep
 import sys
+
+# when to start remembering the face
+face_confidence_trigger = 97
+PERSON_SENSOR_DELAY = 0.1
 
 def getOffsetFromCenter(left, right, top, bottom):
     # Get the center of the face
@@ -18,46 +23,55 @@ def getOffsetFromCenter(left, right, top, bottom):
     offset_x = face_center_x - center_x
     offset_y = face_center_y - center_y
 
+    return (offset_x, offset_y)
+
+def outputToLCD(offset_x, offset_y):
     # Describe the offset
-    retstr = ""
+    offx = ""
     if offset_x < -5:
-        retstr += f"Face is {abs(offset_x)} left of center. "
+        offx += f"{abs(offset_x)} left. "
     elif offset_x > 5:
-        retstr += f"Face is {offset_x} right of center. "
+        offx += f"{offset_x} right. "
     else:
-        retstr += "Face is horizontally centered. "
+        offx += "hori centered."
 
+    offy = ""
     if offset_y < -5:
-        retstr += f"{abs(offset_y)} above center."
+        offy += f"{abs(offset_y)} high."
     elif offset_y > 5:
-        retstr += f"{offset_y} below center."
+        offy += f"{offset_y} low."
     else:
-        retstr += "Vertically centered."
-
-    return retstr
+        offy += "vert centered."
+    
+    lcd.lcdPrint(offx, offy)
 
 def ShowCameraView(data):
     num_faces, faces = data
     print("Found {num_faces} faces")
     
     if (num_faces > 0):
-        face = faces[0]
+        face = USPD.Face(faces[0])
 
-        left = face['box_left']
-        right = face['box_right']
-        top = face['box_top']
-        bottom = face['box_bottom']
+        if (face.is_facing and 
+            face.id_confidence == 0 and
+            face.box_confidence >= face_confidence_trigger):
+            sensor.calibrate(face.id)
+            print("calibrating")
 
-        print(getOffsetFromCenter(left, right, top, bottom))
+        outputToLCD(getOffsetFromCenter(face.left, face.right, face.top, face.bottom))
 
-        #DB.clearScreen()
-        #DB.drawBox(left, right, top, bottom)
+        sleep(PERSON_SENSOR_DELAY)
 
 # connect to sensor
 sensor = USPD.PersonDetector(sys.argv[1])
+lcd = LCD1602.LCD1602()
 
 while True:
-    sensorOut = sensor.read()
-    print(sensorOut)
-    ShowCameraView(sensorOut)
-    sleep(0.5)
+    try:
+        sensorOut = sensor.read()
+        print(sensorOut)
+        ShowCameraView(sensorOut)
+        sleep(0.5)
+
+    except KeyboardInterrupt:
+        lcd.lcdClear()
