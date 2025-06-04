@@ -50,15 +50,16 @@ def ShowCameraView(data):
     print("Found {num_faces} faces")
     
     if (num_faces > 0):
-        face = USPD.Face(faces[0])
+        #face = USPD.Face(faces[0])
+        face = faces[0]
 
-        if (face.is_facing and 
-            face.id_confidence == 0 and
-            face.box_confidence >= face_confidence_trigger):
-            sensor.calibrate(face.id)
+        if (face["is_facing"] and 
+            face["id_confidence"] == 0 and
+            face["box_confidence"] >= face_confidence_trigger):
+            sensor.calibrate(face["id"])
             print("calibrating")
 
-        outputToLCD(getOffsetFromCenter(face.left, face.right, face.top, face.bottom))
+        outputToLCD(getOffsetFromCenter(face["box_left"], face["box_right"], face["box_top"], face["box_bottom"]))
 
         sleep(PERSON_SENSOR_DELAY)
 
