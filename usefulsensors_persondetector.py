@@ -83,13 +83,24 @@ class Face:
     is_facing: int
 
 class PersonDetector:
+    def __enter__(self):
+        return self
+    
+    def __exit__(self, exc_type, exc_value, traceback):
+        self.close()
+
     def __init__(self, channel: int):
-        i2c_handle = io.open("/dev/i2c-" + str(channel), "rb", buffering=0)
+        i2c_handle = io.open("/dev/i2c-" + str(channel), "r+b", buffering=0)
         fcntl.ioctl(i2c_handle, 0x703, _USEFUL_SENSOR_DEFAULT_ADDRESS) 
         self.i2c_device = i2c_handle
         self.reg_buf = bytearray(3)
         self.cmd_buf = bytearray(1)
         print("Person Detector initialized")
+
+    def close(self):
+        if (self.i2c_device):
+            self.i2c_device.close()
+            self.i2c_device = None
 
     def _write_register(self, reg: int, value: int):
         """Write 16 bit value to register"""

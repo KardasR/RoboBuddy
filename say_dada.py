@@ -1,5 +1,4 @@
 # this will test the person sensor from useful sensors.
-
 import usefulsensors_persondetector as USPD
 import LCD1602
 import drawBoxes as DB
@@ -25,7 +24,7 @@ def getOffsetFromCenter(left, right, top, bottom):
 
     return (offset_x, offset_y)
 
-def outputToLCD(offset_x, offset_y):
+def outputToLCD(lcd, offset_x, offset_y):
     # Describe the offset
     offx = ""
     if offset_x < -5:
@@ -45,12 +44,10 @@ def outputToLCD(offset_x, offset_y):
     
     lcd.lcdPrint(offx, offy)
 
-def ShowCameraView(data):
+def CalibrateandOutput(sensor, lcd, data):
     num_faces, faces = data
-    print("Found {num_faces} faces")
     
     if (num_faces > 0):
-        #face = USPD.Face(faces[0])
         face = faces[0]
 
         if (face["is_facing"] and 
@@ -59,20 +56,16 @@ def ShowCameraView(data):
             sensor.calibrate(face["id"])
             print("calibrating")
 
-        outputToLCD(getOffsetFromCenter(face["box_left"], face["box_right"], face["box_top"], face["box_bottom"]))
+        outputToLCD(lcd, getOffsetFromCenter(face["box_left"], face["box_right"], face["box_top"], face["box_bottom"]))
 
-        sleep(PERSON_SENSOR_DELAY)
+def main():
+    with USPD.PersonDetector(sys.argv[1]) as sensor:
+        with LCD1602.LCD1602() as lcd:
+            while True:
+                sensorOut = sensor.read()
+                print(sensorOut)
+                CalibrateandOutput(sensor, lcd, sensorOut)
+                sleep(PERSON_SENSOR_DELAY)
 
-# connect to sensor
-sensor = USPD.PersonDetector(sys.argv[1])
-lcd = LCD1602.LCD1602()
-
-while True:
-    try:
-        sensorOut = sensor.read()
-        print(sensorOut)
-        ShowCameraView(sensorOut)
-        sleep(0.5)
-
-    except KeyboardInterrupt:
-        lcd.lcdClear()
+if (__name__ == "__main__"):
+    main()
