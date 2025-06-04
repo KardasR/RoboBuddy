@@ -96,7 +96,7 @@ class PersonDetector:
         self.reg_buf[0] = reg
         self.reg_buf[1] = (value >> 8) & 0xFF
         self.reg_buf[2] = value & 0xFF
-        self.i2c_device.write(bytearray(self.reg_buf, self.cmd_buf))
+        self.i2c_device.write(str(bytearray(self.reg_buf, self.cmd_buf)))
 
     def _write_cmd(self, reg: int):
         self.cmd_buf[0] = reg
