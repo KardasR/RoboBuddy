@@ -56,7 +56,8 @@ def CalibrateandOutput(sensor, lcd, data):
             sensor.calibrate(face["id"])
             print("calibrating")
 
-        outputToLCD(lcd, getOffsetFromCenter(face["box_left"], face["box_right"], face["box_top"], face["box_bottom"]))
+        offX, offY = getOffsetFromCenter(face["box_left"], face["box_right"], face["box_top"], face["box_bottom"])
+        outputToLCD(lcd, offX, offY)
 
 def main():
     with USPD.PersonDetector(sys.argv[1]) as sensor:
