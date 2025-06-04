@@ -58,9 +58,7 @@ def CalibrateandOutput(sensor, lcd, data):
         offX, offY = getOffsetFromCenter(face["box_left"], face["box_right"], face["box_top"], face["box_bottom"])
         outputToLCD(lcd, offX, offY)
 
-def StartCal(sensor, face):
-    sensor = USPD.PersonDetector(sensor)
-    
+def StartCal(sensor, face):    
     sensor.setContinuousMode(1)
     sensor.setIdModelEnabled(1)
     sensor.setPersistentIds(1)
