@@ -9,9 +9,9 @@ class LCD1602:
     def __exit__(self, exc_type, exc_value, traceback):
         self.lcdClear()
 
-    def lcdPrint(line1, line2):
+    def lcdPrint(self, line1, line2):
         lcd.text(line1, 1)
         lcd.text(line2, 2)
         
-    def lcdClear():
+    def lcdClear(self):
         lcd.clear()
