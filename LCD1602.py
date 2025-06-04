@@ -1,6 +1,6 @@
 from rpi_lcd import LCD
 
-lcd = LCD
+lcd = LCD()
 
 try:
     lcd.text("Papa, are", 1)
