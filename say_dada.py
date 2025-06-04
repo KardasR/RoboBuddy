@@ -53,7 +53,8 @@ def CalibrateandOutput(sensor, lcd, data):
         if (face["is_facing"] and 
             face["id_confidence"] == 0 and
             face["box_confidence"] >= face_confidence_trigger):
-            StartCal(sensor, face)
+            #StartCal(sensor, face)
+            sensor.setStandbyMode()
 
         offX, offY = getOffsetFromCenter(face["box_left"], face["box_right"], face["box_top"], face["box_bottom"])
         outputToLCD(lcd, offX, offY)
