@@ -53,11 +53,21 @@ def CalibrateandOutput(sensor, lcd, data):
         if (face["is_facing"] and 
             face["id_confidence"] == 0 and
             face["box_confidence"] >= face_confidence_trigger):
-            sensor.calibrate(face["id"])
-            print("calibrating")
+            StartCal(sensor, face)
 
         offX, offY = getOffsetFromCenter(face["box_left"], face["box_right"], face["box_top"], face["box_bottom"])
         outputToLCD(lcd, offX, offY)
+
+def StartCal(sensor, face):
+    sensor = USPD.PersonDetector(sensor)
+    
+    sensor.setContinuousMode(1)
+    sensor.setIdModelEnabled(1)
+    sensor.setPersistentIds(1)
+    sleep(0.1)
+    sensor.calibrate(face["id"])
+    sleep(5)
+
 
 def main():
     with USPD.PersonDetector(sys.argv[1]) as sensor:
