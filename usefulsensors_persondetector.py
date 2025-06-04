@@ -99,6 +99,7 @@ class PersonDetector:
 
     def close(self):
         if (self.i2c_device):
+            self.setStandbyMode()
             self.i2c_device.close()
             self.i2c_device = None
 

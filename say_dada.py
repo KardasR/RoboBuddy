@@ -66,7 +66,6 @@ def StartCal(sensor, face):
     sensor.calibrate(face["id"])
     sleep(5)
 
-
 def main():
     with USPD.PersonDetector(sys.argv[1]) as sensor:
         with LCD1602.LCD1602() as lcd:
