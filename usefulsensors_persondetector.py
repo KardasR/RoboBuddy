@@ -123,8 +123,17 @@ class PersonDetector:
             (box_confidence, box_left, box_top, box_right, box_bottom, id_confidence, id, 
              is_facing) = struct.unpack_from(PERSON_SENSOR_FACE_FORMAT, result, offset)
             offset = offset + PERSON_SENSOR_FACE_BYTE_COUNT
-            face = Face(box_confidence, box_left, box_right, box_bottom, box_top, id_confidence, id, is_facing)
-            
+            #face = Face(box_confidence, box_left, box_right, box_bottom, box_top, id_confidence, id, is_facing)
+            face = {
+                    "box_confidence": box_confidence,
+                    "box_left": box_left,
+                    "box_top": box_top,
+                    "box_right": box_right,
+                    "box_bottom": box_bottom,
+                    "id_confidence": id_confidence,
+                    "id": id,
+                    "is_facing": is_facing,
+            }
             faces.append(face)
 
         checksum = struct.unpack_from("H", result, offset)
