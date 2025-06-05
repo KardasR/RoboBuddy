@@ -119,40 +119,46 @@ class PersonDetector:
     def read(self):
         try:
             result = self.i2c_device.read(PERSON_SENSOR_RESULT_BYTE_COUNT)
+            
+            offset = 0
+            (pad1, pad2, payload_bytes) = struct.unpack_from(PERSON_SENSOR_I2C_HEADER_FORMAT, result, offset)
+            offset = offset + PERSON_SENSOR_I2C_HEADER_BYTE_COUNT
+
+            (num_faces) = struct.unpack_from("B", result, offset)
+            num_faces = int(num_faces[0])
+            offset = offset + 1
+
+            faces = []
+            for i in range(num_faces):
+                (box_confidence, box_left, box_top, box_right, box_bottom, id_confidence, id, 
+                is_facing) = struct.unpack_from(PERSON_SENSOR_FACE_FORMAT, result, offset)
+                offset = offset + PERSON_SENSOR_FACE_BYTE_COUNT
+                #face = Face(box_confidence, box_left, box_right, box_bottom, box_top, id_confidence, id, is_facing)
+                face = {
+                        "box_confidence": box_confidence,
+                        "box_left": box_left,
+                        "box_top": box_top,
+                        "box_right": box_right,
+                        "box_bottom": box_bottom,
+                        "id_confidence": id_confidence,
+                        "id": id,
+                        "is_facing": is_facing,
+                }
+                faces.append(face)
+
+            checksum = struct.unpack_from("H", result, offset)
+            
+            return (num_faces, faces)
+        
         except OSError as error:
             print("No person sensor data found")
             print(error)
             return (int(0), [])
-        
-        offset = 0
-        (pad1, pad2, payload_bytes) = struct.unpack_from(PERSON_SENSOR_I2C_HEADER_FORMAT, result, offset)
-        offset = offset + PERSON_SENSOR_I2C_HEADER_BYTE_COUNT
 
-        (num_faces) = struct.unpack_from("B", result, offset)
-        num_faces = int(num_faces[0])
-        offset = offset + 1
-
-        faces = []
-        for i in range(num_faces):
-            (box_confidence, box_left, box_top, box_right, box_bottom, id_confidence, id, 
-             is_facing) = struct.unpack_from(PERSON_SENSOR_FACE_FORMAT, result, offset)
-            offset = offset + PERSON_SENSOR_FACE_BYTE_COUNT
-            #face = Face(box_confidence, box_left, box_right, box_bottom, box_top, id_confidence, id, is_facing)
-            face = {
-                    "box_confidence": box_confidence,
-                    "box_left": box_left,
-                    "box_top": box_top,
-                    "box_right": box_right,
-                    "box_bottom": box_bottom,
-                    "id_confidence": id_confidence,
-                    "id": id,
-                    "is_facing": is_facing,
-            }
-            faces.append(face)
-
-        checksum = struct.unpack_from("H", result, offset)
-        
-        return (num_faces, faces)
+        except struct.error as error:
+            print("Error reading sensor")
+            print(error)
+            return (int(0), [])
 
     def setStandbyMode(self):
         self._write_register(_USEFUL_SENSOR_MODE_REGISTER, 0)
