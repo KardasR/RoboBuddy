@@ -82,8 +82,7 @@ def main():
             while True:
                 sensorOut = sensor.read()
                 print(sensorOut)
-                sensor.set_erase_saved_ids(1)
-                #calibrate_and_output(sensor, lcd, sensorOut)
+                calibrate_and_output(sensor, lcd, sensorOut)
                 sleep(PERSON_SENSOR_DELAY)
 
 if (__name__ == "__main__"):
