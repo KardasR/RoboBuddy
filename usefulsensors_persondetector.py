@@ -99,9 +99,9 @@ class PersonDetector:
 
     def close(self):
         if (self.i2c_device):
-            self.setStandbyMode()
-            self.setIdModelEnabled(0)
-            self.setPersistentIds(0)
+            self.set_stand_by_mode()
+            self.set_id_model_enabled(0)
+            self.set_persistent_ids(0)
             self.i2c_device.close()
             self.i2c_device = None
 
@@ -160,25 +160,25 @@ class PersonDetector:
             print(error)
             return (int(0), [])
 
-    def setStandbyMode(self):
+    def set_stand_by_mode(self):
         self._write_register(_USEFUL_SENSOR_MODE_REGISTER, 0)
 
-    def setContinuousMode(self):
+    def set_continuous_mode(self):
         self._write_register(_USEFUL_SENSOR_MODE_REGISTER, 1)
 
-    def setIdModelEnabled(self, enabled):
+    def set_id_model_enabled(self, enabled):
         self._write_register(_USEFUL_SENSOR_RUN_ID_MODEL_REGISTER, int(enabled))
 
-    def setDebugMode(self, enabled):
+    def set_debug_mode(self, enabled):
         self._write_register(_USEFUL_SENSOR_DEBUG_MODE_REGISTER, int(enabled))
 
-    def setPersistentIds(self, enabled):
+    def set_persistent_ids(self, enabled):
         self._write_register(_USEFUL_SENSOR_PERSISTENT_IDS_REGISTER, int(enabled))
 
-    def setEraseSavedIds(self, enabled):
+    def set_erase_saved_ids(self, enabled):
         self._write_register(_USEFUL_SENSOR_ERASE_SAVED_IDS_REGISTER, int(enabled))
 
-    def singleCapture(self):
+    def single_capture(self):
         """Write to register."""
         self.cmd_buf[0] = _USEFUL_SENSOR_SINGLE_CAPTURE_REGISTER
         with self.i2c_device as i2c:

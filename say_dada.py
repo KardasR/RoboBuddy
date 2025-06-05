@@ -1,7 +1,6 @@
 # this will test the person sensor from useful sensors.
 import usefulsensors_persondetector as USPD
 import LCD1602
-import drawBoxes as DB
 from time import sleep
 import sys
 
@@ -9,7 +8,7 @@ import sys
 face_confidence_trigger = 97
 PERSON_SENSOR_DELAY = 0.1
 
-def getOffsetFromCenter(left, right, top, bottom):
+def get_offset_from_center(left, right, top, bottom):
     # Get the center of the face
     face_center_x = (left + right) // 2
     face_center_y = (top + bottom) // 2
@@ -24,7 +23,7 @@ def getOffsetFromCenter(left, right, top, bottom):
 
     return (offset_x, offset_y)
 
-def outputToLCD(lcd, offset_x, offset_y):
+def output_To_LCD(lcd, offset_x, offset_y):
     # Describe the offset
     offx = ""
     if offset_x < -5:
@@ -44,7 +43,7 @@ def outputToLCD(lcd, offset_x, offset_y):
     
     lcd.lcdPrint(offx, offy)
 
-def CalibrateandOutput(sensor, lcd, data):
+def calibrate_and_output(sensor, lcd, data):
     num_faces, faces = data
     
     if (num_faces > 0):
@@ -53,17 +52,18 @@ def CalibrateandOutput(sensor, lcd, data):
         calStarted = False
         if (face["is_facing"] and 
             face["id_confidence"] == 0 and
-            face["box_confidence"] >= face_confidence_trigger):
-            StartCal(sensor, face)
+            face["box_confidence"] >= face_confidence_trigger and
+            not calStarted):
+            start_cal(sensor, face)
             calStarted = True
 
         if (calStarted and face["box_confidence"] < face_confidence_trigger):
-            EndCal()
+            end_cal()
 
-        offX, offY = getOffsetFromCenter(face["box_left"], face["box_right"], face["box_top"], face["box_bottom"])
-        outputToLCD(lcd, offX, offY)
+        offX, offY = get_offset_from_center(face["box_left"], face["box_right"], face["box_top"], face["box_bottom"])
+        output_To_LCD(lcd, offX, offY)
 
-def StartCal(sensor, face):
+def start_cal(sensor, face):
     sensor.setContinuousMode()
     sensor.setIdModelEnabled(1)
     sensor.setPersistentIds(1)
@@ -71,7 +71,7 @@ def StartCal(sensor, face):
     sensor.calibrate(face["id"])
     sleep(5)
 
-def EndCal(sensor):
+def end_cal(sensor):
     sensor.setStandbyMode()
     sensor.setIdModelEnabled(0)
     sensor.setPersistentIds(0)
@@ -82,7 +82,7 @@ def main():
             while True:
                 sensorOut = sensor.read()
                 print(sensorOut)
-                CalibrateandOutput(sensor, lcd, sensorOut)
+                calibrate_and_output(sensor, lcd, sensorOut)
                 sleep(PERSON_SENSOR_DELAY)
 
 if (__name__ == "__main__"):
