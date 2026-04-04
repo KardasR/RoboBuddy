@@ -1,7 +1,5 @@
 from rpi_lcd import LCD
 
-
-
 class LCD1602:
     def __enter__(self):
         return self

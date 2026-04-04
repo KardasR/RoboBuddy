@@ -90,7 +90,7 @@ class PersonDetector:
         self.close()
 
     def __init__(self, channel: int):
-        i2c_handle = io.open("/dev/i2c-" + str(channel), "r+b", buffering=0)
+        i2c_handle = io.open(file="/dev/i2c-" + str(channel), mode="r+b", buffering=0)
         fcntl.ioctl(i2c_handle, 0x703, _USEFUL_SENSOR_DEFAULT_ADDRESS) 
         self.i2c_device = i2c_handle
         self.reg_buf = bytearray(3)
@@ -133,17 +133,17 @@ class PersonDetector:
                 (box_confidence, box_left, box_top, box_right, box_bottom, id_confidence, id, 
                 is_facing) = struct.unpack_from(PERSON_SENSOR_FACE_FORMAT, result, offset)
                 offset = offset + PERSON_SENSOR_FACE_BYTE_COUNT
-                #face = Face(box_confidence, box_left, box_right, box_bottom, box_top, id_confidence, id, is_facing)
-                face = {
-                        "box_confidence": box_confidence,
-                        "box_left": box_left,
-                        "box_top": box_top,
-                        "box_right": box_right,
-                        "box_bottom": box_bottom,
-                        "id_confidence": id_confidence,
-                        "id": id,
-                        "is_facing": is_facing,
-                }
+                face = Face(box_confidence, box_left, box_right, box_bottom, box_top, id_confidence, id, is_facing)
+                # face = {
+                #         "box_confidence": box_confidence,
+                #         "box_left": box_left,
+                #         "box_top": box_top,
+                #         "box_right": box_right,
+                #         "box_bottom": box_bottom,
+                #         "id_confidence": id_confidence,
+                #         "id": id,
+                #         "is_facing": is_facing,
+                # }
                 faces.append(face)
 
             checksum = struct.unpack_from("H", result, offset)

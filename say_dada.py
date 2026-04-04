@@ -7,8 +7,9 @@ import sys
 # when to start remembering the face
 face_confidence_trigger = 97
 PERSON_SENSOR_DELAY = 0.1
+calStarted = False
 
-def get_offset_from_center(left, right, top, bottom):
+def get_offset_from_center(left: int, right: int, top: int, bottom: int):
     # Get the center of the face
     face_center_x = (left + right) // 2
     face_center_y = (top + bottom) // 2
@@ -23,7 +24,7 @@ def get_offset_from_center(left, right, top, bottom):
 
     return (offset_x, offset_y)
 
-def output_To_LCD(lcd, offset_x, offset_y):
+def output_To_LCD(lcd: LCD1602.LCD1602, offset_x: int, offset_y: int):
     # Describe the offset
     offx = ""
     if offset_x < -5:
@@ -43,35 +44,35 @@ def output_To_LCD(lcd, offset_x, offset_y):
     
     lcd.lcdPrint(offx, offy)
 
-def calibrate_and_output(sensor, lcd, data):
+
+def calibrate_and_output(sensor: USPD.PersonDetector, lcd: LCD1602.LCD1602, data: tuple[int, list[USPD.Face]]):
     num_faces, faces = data
     
     if (num_faces > 0):
         face = faces[0]
-
-        calStarted = False
-        if (face["is_facing"] and 
-            face["id_confidence"] == 0 and
-            face["box_confidence"] >= face_confidence_trigger and
+        
+        if (face.is_facing and 
+            face.id_confidence <= 0 and
+            face.box_confidence >= face_confidence_trigger and
             not calStarted):
-            start_cal(sensor, face)
-            calStarted = True
+                calStarted = True
+                start_cal(sensor, face)
+                lcd.lcdPrint(line1="CALIBRATING", line2="********")
 
-        if (calStarted and face["box_confidence"] < face_confidence_trigger):
+        if (calStarted and face.box_confidence < face_confidence_trigger):
             end_cal()
+            calStarted = False
 
-        offX, offY = get_offset_from_center(face["box_left"], face["box_right"], face["box_top"], face["box_bottom"])
+        offX, offY = get_offset_from_center(face.left, face.right, face.top, face.bottom)
         output_To_LCD(lcd, offX, offY)
 
-def start_cal(sensor, face):
+def start_cal(sensor: USPD.PersonDetector, face: USPD.Face):
     sensor.setContinuousMode()
     sensor.setIdModelEnabled(1)
     sensor.setPersistentIds(1)
-    sleep(0.1)
-    sensor.calibrate(face["id"])
-    sleep(5)
+    sensor.calibrate(face.id)
 
-def end_cal(sensor):
+def end_cal(sensor: USPD.PersonDetector):
     sensor.setStandbyMode()
     sensor.setIdModelEnabled(0)
     sensor.setPersistentIds(0)
