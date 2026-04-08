@@ -8,7 +8,10 @@ class LCD1602:
         self.lcdClear()
 
     def __init__(self):
-        self.lcd = LCD()
+        try:
+            self.lcd = LCD
+        except Exception as e:
+            print(f"Error initializing LCD: {e}")
 
     def lcdPrint(self, line1, line2):
         self.lcd.text(line1, 1)

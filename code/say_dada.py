@@ -80,6 +80,8 @@ def end_cal(sensor: USPD.PersonDetector):
 def main():
     with USPD.PersonDetector(sys.argv[1]) as sensor:
         with LCD1602.LCD1602() as lcd:
+            sensor.set_continuous_mode()
+            
             while True:
                 sensorOut = sensor.read()
                 print(sensorOut)
